@@ -1,32 +1,23 @@
+using Movies.Application.CreateMovieUseCase;
 using Movies.Core.Entities;
 
 namespace Movies.Application.MovieUseCases;
 
 public static class RequestToMovieMapper
 {
-    public static Movie ToMovie(this CreateMovieRequest self)
+    public static Movie ToMovie(this CreateMovieRequest self) => new Movie
     {
-        var movie = new Movie
-        {
-            Id = Guid.NewGuid(),
-            Title = self.Title,
-            YearOfRelease = self.YearOfRelease,
-            Genres = self.Genres.ToList()
-        };
+        Id = Guid.NewGuid(),
+        Title = self.Title,
+        YearOfRelease = self.YearOfRelease,
+        Genres = self.Genres.ToList()
+    };
 
-        return movie;
-    }
-
-    public static MovieResponse ToResponse(this CreateMovieRequest self, Movie movie)
+    public static CreateMovieResponse ToResponse(this CreateMovieRequest self, Movie movie) => new CreateMovieResponse
     {
-        var response = new MovieResponse
-        {
-            Id = movie.Id,
-            Title = movie.Title,
-            YearOfRelease = movie.YearOfRelease,
-            Genres = movie.Genres.AsEnumerable()
-        };
-
-        return response;
-    }
+        Id = movie.Id,
+        Title = movie.Title,
+        YearOfRelease = movie.YearOfRelease,
+        Genres = movie.Genres.AsEnumerable()
+    };
 }
