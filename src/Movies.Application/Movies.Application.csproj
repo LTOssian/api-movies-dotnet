@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Movie/" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Movies.Core\Movies.Core.csproj" />
   </ItemGroup>
 
