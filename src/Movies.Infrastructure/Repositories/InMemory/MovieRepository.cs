@@ -14,7 +14,7 @@ public class MovieRepository : IMovieRepository
             _movies.Add(movie);
             return Task.FromResult(true);
         }
-        catch (Exception ex)
+        catch
         {
             return Task.FromResult(false);
         }
