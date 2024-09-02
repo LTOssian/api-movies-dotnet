@@ -40,7 +40,7 @@ public class MovieRepository : IMovieRepository
 
     public Task<bool> UpdateAsync(Movie movie)
     {
-        var movieIndex = _movies.FindIndex(movie => movie.Id == movie.Id);
+        var movieIndex = _movies.FindIndex(item => item.Id == movie.Id);
         if (movieIndex == -1)
             return Task.FromResult(false);
 

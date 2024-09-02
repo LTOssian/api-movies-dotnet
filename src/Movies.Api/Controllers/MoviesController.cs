@@ -48,4 +48,18 @@ public class MoviesController : ControllerBase
 
         return Ok(response);
     }
+
+    [HttpPut(ApiEndpoints.Movies.Update)]
+    public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateMovieRequest request)
+    {
+        var movie = await _movieRepository.GetByIdAsync(id);
+        if (movie is null)
+        {
+            return NotFound();
+        }
+
+        var result = await _movieRepository.UpdateAsync(request.ToMovie(id));
+
+        return result ? NoContent() : BadRequest();
+    }
 }
