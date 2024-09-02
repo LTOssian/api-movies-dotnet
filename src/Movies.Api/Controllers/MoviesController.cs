@@ -1,11 +1,8 @@
-using System;
 using Microsoft.AspNetCore.Mvc;
 using Movies.Application.MovieUseCases;
-using Movies.Core.Entities;
 
 namespace Movies.Api.Controllers;
 
-[Route("/api/movies")]
 [ApiController]
 public class MoviesController : ControllerBase
 {
@@ -16,7 +13,7 @@ public class MoviesController : ControllerBase
         _movieRepository = movieRepository;
     }
 
-    [HttpPost]
+    [HttpPost(ApiEndpoints.Movies.Create)]
     public async Task<IActionResult> Create([FromBody]CreateMovieRequest request)
     {
         var movie = request.ToMovie();
@@ -26,5 +23,29 @@ public class MoviesController : ControllerBase
         var response = request.ToResponse(movie);
 
         return Created($"/api/movies/{response.Id}",response);
+    }
+
+    [HttpGet(ApiEndpoints.Movies.Get)]
+    public async Task<IActionResult> Get([FromRoute] Guid id)
+    {
+        var movie = await _movieRepository.GetByIdAsync(id);
+        if (movie is null)
+        {
+            return NotFound();
+        }
+
+        var response = movie.ToResponse();
+
+        return Ok(response);
+    }
+
+    [HttpGet(ApiEndpoints.Movies.GetAll)]
+    public async Task<IActionResult> GetAll()
+    {
+        var movies = await _movieRepository.GetAllAsync();
+
+        var response = movies.ToResponse();
+
+        return Ok(response);
     }
 }
