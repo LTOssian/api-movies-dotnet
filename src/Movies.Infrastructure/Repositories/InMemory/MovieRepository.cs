@@ -27,6 +27,11 @@ public class MovieRepository : IMovieRepository
         return Task.FromResult(removed > 0);
     }
 
+    public Task<bool> ExistsById(Guid id)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task<IEnumerable<Movie>> GetAllAsync()
     {
         return Task.FromResult(_movies.AsEnumerable());

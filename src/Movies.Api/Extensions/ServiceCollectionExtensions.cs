@@ -1,6 +1,6 @@
 using Movies.Application.MovieUseCases;
 using Movies.Infrastructure.Database;
-using Movies.Infrastructure.Repositories.InMemory;
+using Movies.Infrastructure.Repositories.Postgresql;
 
 namespace Movies.Api.Extensions;
 

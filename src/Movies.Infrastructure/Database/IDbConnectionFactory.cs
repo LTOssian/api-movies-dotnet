@@ -6,7 +6,7 @@ namespace Movies.Infrastructure.Database;
 
 public interface IDbConnectionFactory
 {
-    Task<IDbConnection> CreateConnectionAsync();
+    Task<NpgsqlConnection> CreateConnectionAsync();
 }
 
 public class NpgsqlConnectionFactory : IDbConnectionFactory
@@ -18,7 +18,7 @@ public class NpgsqlConnectionFactory : IDbConnectionFactory
         _connectionSttring = connectionString;
     }
 
-    public async Task<IDbConnection> CreateConnectionAsync()
+    public async Task<NpgsqlConnection> CreateConnectionAsync()
     {
         var connection = new NpgsqlConnection(_connectionSttring);
         await connection.OpenAsync();
