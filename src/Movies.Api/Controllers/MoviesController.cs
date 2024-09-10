@@ -66,7 +66,7 @@ public class MoviesController : ControllerBase
 
         var result = await _movieRepository.UpdateAsync(movie);
 
-        return result ? NoContent() : BadRequest();
+        return result ? Ok(movie) : BadRequest();
     }
 
     [HttpDelete(ApiEndpoints.Movies.Delete)]
