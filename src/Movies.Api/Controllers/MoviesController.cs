@@ -14,21 +14,23 @@ public class MoviesController : ControllerBase
     }
 
     [HttpPost(ApiEndpoints.Movies.Create)]
-    public async Task<IActionResult> Create([FromBody]CreateMovieRequest request)
+    public async Task<IActionResult> Create([FromBody] CreateMovieRequest request)
     {
         var movie = request.ToMovie();
 
         await _movieRepository.CreateAsync(movie);
 
         var response = request.ToResponse(movie);
-
-        return Created($"/api/movies/{response.Id}",response);
+        return CreatedAtAction(nameof(Get), new { idOrSlug = response.Id }, response);
     }
 
     [HttpGet(ApiEndpoints.Movies.Get)]
-    public async Task<IActionResult> Get([FromRoute] Guid id)
+    public async Task<IActionResult> Get([FromRoute] string idOrSlug)
     {
-        var movie = await _movieRepository.GetByIdAsync(id);
+        var movie = Guid.TryParse(idOrSlug, out var id)
+            ? await _movieRepository.GetByIdAsync(id)
+            : await _movieRepository.GetBySlugAsync(idOrSlug);
+
         if (movie is null)
         {
             return NotFound();
@@ -50,7 +52,10 @@ public class MoviesController : ControllerBase
     }
 
     [HttpPut(ApiEndpoints.Movies.Update)]
-    public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateMovieRequest request)
+    public async Task<IActionResult> Update(
+        [FromRoute] Guid id,
+        [FromBody] UpdateMovieRequest request
+    )
     {
         var movie = request.ToMovie(id);
         var movieExists = await _movieRepository.GetByIdAsync(id);
