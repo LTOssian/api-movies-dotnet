@@ -1,9 +1,12 @@
 using Movies.Api.Extensions;
+using Movies.Infrastructure.Database;
 
 var builder = WebApplication.CreateBuilder(args);
+var config = builder.Configuration;
 
 builder.Services.AddPresentation()
-    .AddInfrastructure();
+    .AddInfrastructure()
+    .AddDatabase(config["Database:ConnectionString"]);
 
 var app = builder.Build();
 
@@ -15,5 +18,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.MapControllers();
+
+var databaseInitializer = app.Services.GetRequiredService<DatabaseInitializer>();
+await databaseInitializer.InitializeAsync();
 
 app.Run();
