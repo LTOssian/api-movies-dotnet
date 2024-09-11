@@ -1,4 +1,5 @@
 using Movies.Application.MovieUseCases;
+using Movies.Application.MovieUseCases.Services;
 using Movies.Infrastructure.Database;
 using Movies.Infrastructure.Repositories.Postgresql;
 
@@ -9,6 +10,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
         services.AddSingleton<IMovieRepository, MovieRepository>();
+        services.AddSingleton<IMovieService, MovieService>();
         return services;
     }
 
