@@ -1,3 +1,5 @@
+using FluentValidation;
+using Movies.Application;
 using Movies.Application.MovieUseCases;
 using Movies.Application.MovieUseCases.Services;
 using Movies.Infrastructure.Database;
@@ -11,6 +13,8 @@ public static class ServiceCollectionExtensions
     {
         services.AddSingleton<IMovieRepository, MovieRepository>();
         services.AddSingleton<IMovieService, MovieService>();
+        services.AddValidatorsFromAssemblyContaining<IApplicationMarker>(ServiceLifetime.Singleton);
+        
         return services;
     }
 

@@ -1,4 +1,5 @@
 using Movies.Api.Extensions;
+using Movies.Api.Middlewares;
 using Movies.Infrastructure.Database;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +18,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<ValidationMappingMiddleware>();
 app.MapControllers();
 
 var databaseInitializer = app.Services.GetRequiredService<DatabaseInitializer>();

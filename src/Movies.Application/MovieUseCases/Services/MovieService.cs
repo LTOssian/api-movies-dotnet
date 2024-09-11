@@ -1,19 +1,25 @@
+using FluentValidation;
+using Movies.Application.MovieUseCases.Validators;
 using Movies.Core.Entities;
 
 namespace Movies.Application.MovieUseCases.Services;
 
 public class MovieService : IMovieService
 {
+    private readonly MovieValidator _movieValidator;
     private readonly IMovieRepository _movieRepository;
 
-    public MovieService(IMovieRepository movieRepository)
+    public MovieService(IMovieRepository movieRepository, MovieValidator movieValidator)
     {
+        _movieValidator = movieValidator;
         _movieRepository = movieRepository;
     }
 
-    public Task<bool> CreateAsync(Movie movie)
+    public async Task<bool> CreateAsync(Movie movie)
     {
-        return _movieRepository.CreateAsync(movie);
+        await _movieValidator.ValidateAndThrowAsync(movie);
+        
+        return await  _movieRepository.CreateAsync(movie);
     }
 
     public Task<bool> DeleteAsync(Guid id)
@@ -43,6 +49,8 @@ public class MovieService : IMovieService
 
     public async Task<Movie?> UpdateAsync(Movie movie)
     {
+        await _movieValidator.ValidateAndThrowAsync(movie);
+
         var movieExists = await _movieRepository.ExistsById(movie.Id);
         if (!movieExists)
             return null;
