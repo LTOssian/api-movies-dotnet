@@ -1,7 +1,8 @@
-using Movies.Application.CreateMovieUseCase;
+using Movies.Contracts.Requests;
+using Movies.Contracts.Responses;
 using Movies.Core.Entities;
 
-namespace Movies.Application.MovieUseCases;
+namespace Movies.Api.Mapping;
 
 public static class RequestToMovieMapper
 {

@@ -1,6 +1,6 @@
-namespace Movies.Application.MovieUseCases;
+namespace Movies.Contracts.Requests;
 
-public record CreateMovieRequest
+public record UpdateMovieRequest
 {
     public required string Title { get; init; }
     public required int YearOfRelease { get; init; }

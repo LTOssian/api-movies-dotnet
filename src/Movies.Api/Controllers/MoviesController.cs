@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using Movies.Application.MovieUseCases;
+using Movies.Api.Mapping;
 using Movies.Application.MovieUseCases.Services;
+using Movies.Contracts.Requests;
 
 namespace Movies.Api.Controllers;
 
