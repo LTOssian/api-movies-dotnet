@@ -22,32 +22,43 @@ public class MovieService : IMovieService
         return await _movieRepository.CreateAsync(movie, token);
     }
 
-    public Task<bool> DeleteAsync(Guid id, CancellationToken token = default)
+    public async Task<bool> DeleteAsync(Guid id, CancellationToken token = default)
     {
-        return _movieRepository.DeleteAsync(id, token);
+        return await _movieRepository.DeleteAsync(id, token);
     }
 
-    public Task<bool> ExistsById(Guid id, CancellationToken token = default)
+    public async Task<bool> ExistsById(Guid id, CancellationToken token = default)
     {
-        return _movieRepository.ExistsById(id, token);
+        return await _movieRepository.ExistsById(id, token);
     }
 
-    public Task<IEnumerable<Movie>> GetAllAsync(CancellationToken token = default)
+    public async Task<IEnumerable<Movie>> GetAllAsync(
+        Guid? userId,
+        CancellationToken token = default
+    )
     {
-        return _movieRepository.GetAllAsync(token);
+        return await _movieRepository.GetAllAsync(userId, token);
     }
 
-    public Task<Movie?> GetByIdAsync(Guid id, CancellationToken token = default)
+    public async Task<Movie?> GetByIdAsync(Guid id, Guid? userId, CancellationToken token = default)
     {
-        return _movieRepository.GetByIdAsync(id, token);
+        return await _movieRepository.GetByIdAsync(id, userId, token);
     }
 
-    public Task<Movie?> GetBySlugAsync(string slug, CancellationToken token = default)
+    public async Task<Movie?> GetBySlugAsync(
+        string slug,
+        Guid? userId,
+        CancellationToken token = default
+    )
     {
-        return _movieRepository.GetBySlugAsync(slug, token);
+        return await _movieRepository.GetBySlugAsync(slug, userId, token);
     }
 
-    public async Task<Movie?> UpdateAsync(Movie movie, CancellationToken token = default)
+    public async Task<Movie?> UpdateAsync(
+        Movie movie,
+        Guid? userId,
+        CancellationToken token = default
+    )
     {
         await _movieValidator.ValidateAndThrowAsync(movie, token);
 

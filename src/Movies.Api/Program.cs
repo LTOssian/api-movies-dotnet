@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Movies.Api;
+using Movies.Api.Auth;
 using Movies.Api.Extensions;
 using Movies.Api.Middlewares;
 using Movies.Infrastructure.Database;
@@ -47,7 +48,7 @@ builder.Services.AddAuthorization(x =>
 });
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// builder.Services.AddSwaggerGen();
 
 builder
     .Services.AddPresentation()

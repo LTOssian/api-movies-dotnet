@@ -113,17 +113,17 @@ internal class StubFailingGetBySlugRepository : IMovieRepository
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<Movie>> GetAllAsync(CancellationToken token = default)
+    public Task<IEnumerable<Movie>> GetAllAsync(Guid? userId, CancellationToken token = default)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Movie?> GetByIdAsync(Guid id, CancellationToken token = default)
+    public Task<Movie?> GetByIdAsync(Guid id, Guid? userId, CancellationToken token = default)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<Movie?> GetBySlugAsync(string slug, CancellationToken token = default)
+    public async Task<Movie?> GetBySlugAsync(string slug, Guid? userId, CancellationToken token = default)
     {
         return await Task.FromResult<Movie?>(null);
     }
