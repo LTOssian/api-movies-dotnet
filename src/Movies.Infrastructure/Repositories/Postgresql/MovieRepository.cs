@@ -1,4 +1,3 @@
-using System;
 using System.Data;
 using Dapper;
 using Movies.Application.MovieUseCases;
@@ -110,17 +109,23 @@ public class MovieRepository : IMovieRepository
         );
     }
 
-    public async Task<IEnumerable<Movie>> GetAllAsync(CancellationToken token = default)
+    public async Task<IEnumerable<Movie>> GetAllAsync(
+        Guid? userId,
+        CancellationToken token = default
+    )
     {
         using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
         var movieSelectResult = await connection.QueryAsync(
             new CommandDefinition(
                 """
-                    SELECT m.*, string_agg(g.name, ',') as genres
+                    SELECT m.*, string_agg(DISTINCT g.name, ',') as genres, round(avg(r.rating), 1) AS rating, my_r.rating AS UserRating
                     FROM movies AS m 
                     LEFT JOIN genres AS g on m.id = g.movie_id
-                    GROUP BY id
+                    LEFT JOIN ratings AS r ON m.id = r.movie_id
+                    LEFT JOIN ratings AS my_r ON m.id = my_r.movie_id AND my_r.user_id = @userId
+                    GROUP BY m.id, UserRating
                 """,
+                new { userId },
                 cancellationToken: token
             )
         );
@@ -130,21 +135,27 @@ public class MovieRepository : IMovieRepository
             Id = x.id,
             Title = x.title,
             YearOfRelease = x.year_of_release,
+            Ratings = (float?)x.rating,
+            UserRating = (int?)x.UserRating,
             Genres = Enumerable.ToList(x.genres.Split(','))
         });
     }
 
-    public async Task<Movie?> GetByIdAsync(Guid id, CancellationToken token = default)
+    public async Task<Movie?> GetByIdAsync(Guid id, Guid? userId, CancellationToken token = default)
     {
         using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
         var movie = await connection.QuerySingleOrDefaultAsync<Movie>(
             new CommandDefinition(
                 """
-                    SELECT *, movies.year_of_release AS YearOfRelease
-                    FROM movies 
-                    WHERE id = @id
+                    SELECT m.*, m.year_of_release AS YearOfRelease, round(avg(r.rating), 1) AS rating, my_r.rating AS UserRating
+                    FROM movies AS m
+                    LEFT JOIN ratings AS r ON m.id = r.movie_id
+                    LEFT JOIN ratings AS my_r ON m.id = my_r.movie_id 
+                        AND my_r.user_id = @userId
+                    WHERE m.id = @id
+                    GROUP BY m.id, UserRating
                 """,
-                new { id },
+                new { id, userId },
                 cancellationToken: token
             )
         );
@@ -171,17 +182,33 @@ public class MovieRepository : IMovieRepository
         return movie;
     }
 
-    public async Task<Movie?> GetBySlugAsync(string slug, CancellationToken token = default)
+    public async Task<Movie?> GetBySlugAsync(
+        string slug,
+        Guid? userId,
+        CancellationToken token = default
+    )
     {
         using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
         var movie = await connection.QuerySingleOrDefaultAsync<Movie>(
             new CommandDefinition(
                 """
-                    SELECT *, movies.year_of_release AS YearOfRelease
-                    FROM movies 
-                    WHERE slug = @slug
+                    SELECT
+                        m.*,
+                        m.year_of_release AS YearOfRelease,
+                        round(avg(r.rating), 1) AS rating,
+                        my_r.rating AS UserRating
+                    FROM
+                        movies AS m
+                        LEFT JOIN ratings AS r ON m.id = r.movie_id
+                        LEFT JOIN ratings AS my_r ON m.id = my_r.movie_id
+                        AND my_r.user_id = @userId
+                    WHERE
+                        m.slug=@slug
+                    GROUP BY
+                        m.id,
+                        UserRating
                 """,
-                new { slug },
+                new { slug, userId },
                 cancellationToken: token
             )
         );
