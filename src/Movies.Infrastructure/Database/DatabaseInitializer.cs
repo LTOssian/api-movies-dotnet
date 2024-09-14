@@ -22,7 +22,7 @@ public class DatabaseInitializer
                 id UUID primary key,
                 slug TEXT not null,
                 title TEXT not null,
-                year_of_release integer not null);
+                year_of_release INTEGER not null);
             """
         );
 
@@ -39,6 +39,17 @@ public class DatabaseInitializer
                 create table if not exists genres (
                 movie_id UUID references movies (id),
                 name TEXT not null);
+            """
+        );
+
+        await connection.ExecuteAsync(
+            """
+                create table if not exists ratings (
+                user_id UUID,
+                movie_id UUID references movies (id),
+                rating INTEGER not null,
+                primary key (user_id, movie_id)
+                );
             """
         );
     }

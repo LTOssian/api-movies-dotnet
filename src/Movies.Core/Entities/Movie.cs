@@ -10,6 +10,9 @@ public partial record Movie
     public required int YearOfRelease { get; init; }
     public required List<string> Genres { get; init; } = [];
 
+    public float? Ratings { get; init; }
+    public int? UserRating { get; init; }
+
     private string GenerateSlug()
     {
         var slugText = SlugRegex().Replace(Title, string.Empty).ToLower().Replace(" ", "-");
