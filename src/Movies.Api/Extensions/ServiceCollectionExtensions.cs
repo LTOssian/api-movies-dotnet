@@ -3,6 +3,7 @@ using Movies.Application;
 using Movies.Application.MovieUseCases;
 using Movies.Application.MovieUseCases.Services;
 using Movies.Application.RatingUseCases;
+using Movies.Application.RatingUseCases.Services;
 using Movies.Infrastructure.Database;
 using Movies.Infrastructure.Repositories.Postgresql;
 
@@ -15,6 +16,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IMovieRepository, MovieRepository>();
         services.AddSingleton<IRatingRepository, RatingRepository>();
         services.AddSingleton<IMovieService, MovieService>();
+        services.AddSingleton<IRatingService, RatingService>();
         services.AddValidatorsFromAssemblyContaining<IApplicationMarker>(ServiceLifetime.Singleton);
         
         return services;
