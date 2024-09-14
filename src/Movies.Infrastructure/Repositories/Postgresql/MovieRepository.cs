@@ -135,7 +135,7 @@ public class MovieRepository : IMovieRepository
             Id = x.id,
             Title = x.title,
             YearOfRelease = x.year_of_release,
-            Ratings = (float?)x.rating,
+            Rating = (float?)x.rating,
             UserRating = (int?)x.UserRating,
             Genres = Enumerable.ToList(x.genres.Split(','))
         });

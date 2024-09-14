@@ -10,8 +10,8 @@ public partial record Movie
     public required int YearOfRelease { get; init; }
     public required List<string> Genres { get; init; } = [];
 
-    public float? Ratings { get; init; }
-    public int? UserRating { get; init; }
+    public float? Rating { get; set; }
+    public int? UserRating { get; set; }
 
     private string GenerateSlug()
     {

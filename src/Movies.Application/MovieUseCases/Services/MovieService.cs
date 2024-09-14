@@ -56,7 +56,6 @@ public class MovieService : IMovieService
 
     public async Task<Movie?> UpdateAsync(
         Movie movie,
-        Guid? userId,
         CancellationToken token = default
     )
     {
