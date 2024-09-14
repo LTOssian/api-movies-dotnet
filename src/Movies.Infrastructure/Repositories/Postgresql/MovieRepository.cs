@@ -118,12 +118,12 @@ public class MovieRepository : IMovieRepository
         var movieSelectResult = await connection.QueryAsync(
             new CommandDefinition(
                 """
-                    SELECT m.*, string_agg(DISTINCT g.name, ',') as genres, round(avg(r.rating), 1) AS rating, my_r.rating AS UserRating
+                    SELECT m.*, string_agg(DISTINCT g.name, ',') as genres, round(avg(r.rating), 1) AS rating, my_r.rating AS user_rating
                     FROM movies AS m 
                     LEFT JOIN genres AS g on m.id = g.movie_id
                     LEFT JOIN ratings AS r ON m.id = r.movie_id
                     LEFT JOIN ratings AS my_r ON m.id = my_r.movie_id AND my_r.user_id = @userId
-                    GROUP BY m.id, UserRating
+                    GROUP BY m.id, user_rating
                 """,
                 new { userId },
                 cancellationToken: token
@@ -136,7 +136,7 @@ public class MovieRepository : IMovieRepository
             Title = x.title,
             YearOfRelease = x.year_of_release,
             Rating = (float?)x.rating,
-            UserRating = (int?)x.UserRating,
+            UserRating = (int?)x.user_rating,
             Genres = Enumerable.ToList(x.genres.Split(','))
         });
     }

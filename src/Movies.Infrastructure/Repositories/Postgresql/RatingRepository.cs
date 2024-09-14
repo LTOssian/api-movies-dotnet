@@ -75,8 +75,8 @@ public class RatingRepository : IRatingRepository
                 """
                     INSERT INTO ratings (user_id, movie_id, rating)
                     VALUES (@userId, @movieId, @rating)
-                    ON CONFLICT (@userId, @movieId,)DO UPDATE
-                        SET rating = @rating
+                    ON CONFLICT (user_id, movie_id) 
+                    DO UPDATE SET rating = EXCLUDED.rating
                 """,
                 new
                 {

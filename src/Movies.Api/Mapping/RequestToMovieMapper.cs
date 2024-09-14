@@ -21,6 +21,8 @@ public static class RequestToMovieMapper
             Id = movie.Id,
             Title = movie.Title,
             Slug = movie.Slug,
+            Rating = movie.Rating,
+            UserRating = movie.UserRating,
             YearOfRelease = movie.YearOfRelease,
             Genres = movie.Genres.AsEnumerable()
         };
@@ -31,6 +33,8 @@ public static class RequestToMovieMapper
             Id = self.Id,
             Title = self.Title,
             Slug = self.Slug,
+            Rating = self.Rating,
+            UserRating = self.UserRating,
             YearOfRelease = self.YearOfRelease,
             Genres = self.Genres.AsEnumerable()
         };
