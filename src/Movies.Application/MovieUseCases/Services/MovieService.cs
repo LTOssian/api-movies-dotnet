@@ -1,5 +1,6 @@
 using FluentValidation;
 using Movies.Application.MovieUseCases.Validators;
+using Movies.Application.RatingUseCases;
 using Movies.Core.Entities;
 
 namespace Movies.Application.MovieUseCases.Services;
@@ -8,11 +9,13 @@ public class MovieService : IMovieService
 {
     private readonly MovieValidator _movieValidator;
     private readonly IMovieRepository _movieRepository;
+    private readonly IRatingRepository _ratingRepository;
 
-    public MovieService(IMovieRepository movieRepository, MovieValidator movieValidator)
+    public MovieService(IMovieRepository movieRepository, MovieValidator movieValidator, IRatingRepository ratingRepository)
     {
         _movieValidator = movieValidator;
         _movieRepository = movieRepository;
+        _ratingRepository = ratingRepository;
     }
 
     public async Task<bool> CreateAsync(Movie movie, CancellationToken token = default)
@@ -56,6 +59,7 @@ public class MovieService : IMovieService
 
     public async Task<Movie?> UpdateAsync(
         Movie movie,
+        Guid? userId,
         CancellationToken token = default
     )
     {
@@ -66,6 +70,17 @@ public class MovieService : IMovieService
             return null;
 
         await _movieRepository.UpdateAsync(movie, token);
+
+        if (!userId.HasValue)
+        {
+            var rating = await _ratingRepository.GetRatingAsync(movie.Id, token);
+            movie.Rating = rating;
+            return movie;
+        }
+
+        var ratings = await _ratingRepository.GetUserRatingAsync(movie.Id, userId.Value, token);
+        movie.Rating = ratings.Rating;
+        movie.UserRating = ratings.UserRating;
 
         return movie;
     }

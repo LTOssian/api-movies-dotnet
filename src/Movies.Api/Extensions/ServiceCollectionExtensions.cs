@@ -2,6 +2,7 @@ using FluentValidation;
 using Movies.Application;
 using Movies.Application.MovieUseCases;
 using Movies.Application.MovieUseCases.Services;
+using Movies.Application.RatingUseCases;
 using Movies.Infrastructure.Database;
 using Movies.Infrastructure.Repositories.Postgresql;
 
@@ -12,6 +13,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
         services.AddSingleton<IMovieRepository, MovieRepository>();
+        services.AddSingleton<IRatingRepository, RatingRepository>();
         services.AddSingleton<IMovieService, MovieService>();
         services.AddValidatorsFromAssemblyContaining<IApplicationMarker>(ServiceLifetime.Singleton);
         
