@@ -1,3 +1,5 @@
+using Movies.Core.Entities;
+
 namespace Movies.Application.RatingUseCases;
 
 public interface IRatingRepository
@@ -7,4 +9,5 @@ public interface IRatingRepository
     Task<(float? Rating, int? UserRating)> GetUserRatingAsync(Guid movieId, Guid userId, CancellationToken token);
     Task<bool> DeleteRatingAsync(Guid movieId, Guid userId, CancellationToken token);
     Task<bool> ExistsByMovieAndUserIds(Guid movieId, Guid userId, CancellationToken token);
+    Task<IEnumerable<RatedMovie>> GetRatedMoviesAsync(Guid userId, CancellationToken token);
 }

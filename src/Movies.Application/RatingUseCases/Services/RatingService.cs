@@ -1,5 +1,6 @@
 using Movies.Application.MovieUseCases;
 using Movies.Application.RatingUseCases.Validators;
+using Movies.Core.Entities;
 
 namespace Movies.Application.RatingUseCases.Services;
 
@@ -47,5 +48,10 @@ public class RatingService : IRatingService
         }
 
         return await _ratingRepository.DeleteRatingAsync(movieId, userId, token);
+    }
+
+    public async Task<IEnumerable<RatedMovie>> GetRatedMovies(Guid userId, CancellationToken token = default)
+    {
+        return await _ratingRepository.GetRatedMoviesAsync(userId, token);
     }
 }

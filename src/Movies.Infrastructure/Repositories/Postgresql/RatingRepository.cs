@@ -1,5 +1,6 @@
 using Dapper;
 using Movies.Application.RatingUseCases;
+using Movies.Core.Entities;
 using Movies.Infrastructure.Database;
 
 namespace Movies.Infrastructure.Repositories.Postgresql;
@@ -52,6 +53,29 @@ public class RatingRepository : IRatingRepository
                 cancellationToken: token
             )
         );
+    }
+
+    public async Task<IEnumerable<RatedMovie>> GetRatedMoviesAsync(
+        Guid userId,
+        CancellationToken token
+    )
+    {
+        using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
+
+        var ratedMoviesResult = await connection.QueryAsync<RatedMovie>(
+            new CommandDefinition(
+                """
+                    SELECT r.movie_id AS movieid, m.slug AS slug, r.rating AS rating
+                    FROM movies AS m
+                    JOIN ratings AS r ON m.id = r.movie_id
+                    AND r.user_id = @userId
+                """,
+                new { userId },
+                cancellationToken: token
+            )
+        );
+
+        return ratedMoviesResult;
     }
 
     public async Task<float?> GetRatingAsync(Guid movieId, CancellationToken token)
