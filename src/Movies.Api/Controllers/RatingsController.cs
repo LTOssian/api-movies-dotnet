@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Movies.Api.Auth;
+using Movies.Api.Mapping;
 using Movies.Application.RatingUseCases.Services;
 using Movies.Contracts.Requests;
 
@@ -41,5 +42,16 @@ public class RatingsController : ControllerBase
         }
 
         return NoContent();
+    }
+
+    [Authorize]
+    [HttpGet(ApiEndpoints.Ratings.GetUserRatings)]
+    public async Task<IActionResult> Get(CancellationToken token)
+    {
+        var userId = HttpContext.GetUserId();
+        var ratings = await _ratingService.GetRatedMovies(userId!.Value, token);
+        var response = ratings.Select(x => x.ToResponse());
+
+        return Ok(response);
     }
 }
