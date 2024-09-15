@@ -64,19 +64,7 @@ public class MovieRepository : IMovieRepository
     {
         using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
         using var transaction = await connection.BeginTransactionAsync();
-
-        await connection.ExecuteAsync(
-            new CommandDefinition(
-                """
-                    DELETE FROM genres 
-                    WHERE movie_id = @id
-                """,
-                new { id },
-                transaction,
-                cancellationToken: token
-            )
-        );
-
+        
         var deletedMovieResult = await connection.ExecuteAsync(
             new CommandDefinition(
                 """
