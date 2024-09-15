@@ -46,11 +46,20 @@ public static class RequestToMovieMapper
         return response;
     }
 
-    public static Movie ToMovie(this UpdateMovieRequest self, Guid id) => new Movie
-    {
-        Id = id,
-        Title = self.Title,
-        YearOfRelease = self.YearOfRelease,
-        Genres = self.Genres.ToList()
-    };
+    public static Movie ToMovie(this UpdateMovieRequest self, Guid id) =>
+        new Movie
+        {
+            Id = id,
+            Title = self.Title,
+            YearOfRelease = self.YearOfRelease,
+            Genres = self.Genres.ToList()
+        };
+
+    public static RatedMovieResponse ToResponse(this RatedMovie self) =>
+        new RatedMovieResponse
+        {
+            MovieId = self.MovieId,
+            Slug = self.Slug,
+            Rating = self.Rating
+        };
 }
