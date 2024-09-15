@@ -34,6 +34,26 @@ public class RatingRepository : IRatingRepository
         return deletedRatingResult > 0;
     }
 
+    public async Task<bool> ExistsByMovieAndUserIds(
+        Guid movieId,
+        Guid userId,
+        CancellationToken token
+    )
+    {
+        using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
+        return await connection.ExecuteScalarAsync<bool>(
+            new CommandDefinition(
+                """
+                    SELECT count(1)
+                    FROM ratings
+                    WHERE movie_id = @movieId AND user_id = @userId
+                """,
+                new { movieId, userId },
+                cancellationToken: token
+            )
+        );
+    }
+
     public async Task<float?> GetRatingAsync(Guid movieId, CancellationToken token)
     {
         using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
