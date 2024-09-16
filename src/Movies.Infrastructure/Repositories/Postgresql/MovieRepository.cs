@@ -64,7 +64,7 @@ public class MovieRepository : IMovieRepository
     {
         using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
         using var transaction = await connection.BeginTransactionAsync();
-        
+
         var deletedMovieResult = await connection.ExecuteAsync(
             new CommandDefinition(
                 """
@@ -98,7 +98,7 @@ public class MovieRepository : IMovieRepository
     }
 
     public async Task<IEnumerable<Movie>> GetAllAsync(
-        Guid? userId,
+        GetAllMoviesOptions options,
         CancellationToken token = default
     )
     {
@@ -110,15 +110,23 @@ public class MovieRepository : IMovieRepository
                     FROM movies AS m 
                     LEFT JOIN genres AS g on m.id = g.movie_id
                     LEFT JOIN ratings AS r ON m.id = r.movie_id
-                    LEFT JOIN ratings AS my_r ON m.id = my_r.movie_id AND my_r.user_id = @userId
+                    LEFT JOIN ratings AS my_r ON m.id = my_r.movie_id 
+                        AND my_r.user_id = @userId
+                    WHERE (@title IS NULL OR LOWER(m.title) LIKE ('%' || LOWER(@title) || '%'))
+                        AND (@yearofrelease IS NULL OR m.year_of_release = @yearofrelease)
                     GROUP BY m.id, user_rating
                 """,
-                new { userId },
+                new
+                {
+                    userId = options.UserId,
+                    title = options.Title,
+                    yearofrelease = options.YearOfRelease
+                },
                 cancellationToken: token
             )
         );
 
-        return movieSelectResult.Select(x => new Movie
+        var res = movieSelectResult.Select(x => new Movie
         {
             Id = x.id,
             Title = x.title,
@@ -127,6 +135,8 @@ public class MovieRepository : IMovieRepository
             UserRating = (int?)x.user_rating,
             Genres = Enumerable.ToList(x.genres.Split(','))
         });
+
+        return res;
     }
 
     public async Task<Movie?> GetByIdAsync(Guid id, Guid? userId, CancellationToken token = default)

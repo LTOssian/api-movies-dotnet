@@ -1,3 +1,4 @@
+using Movies.Application.MovieUseCases;
 using Movies.Contracts.Requests;
 using Movies.Contracts.Responses;
 using Movies.Core.Entities;
@@ -62,4 +63,18 @@ public static class RequestToMovieMapper
             Slug = self.Slug,
             Rating = self.Rating
         };
+
+    public static GetAllMoviesOptions ToOptions(this GetAllMoviesRequest request) =>
+        new GetAllMoviesOptions
+        {
+            Title = request.Title,
+            YearOfRelease = request.Year,
+            SortBy = request.SortBy
+        };
+
+    public static GetAllMoviesOptions WithUserId(this GetAllMoviesOptions self, Guid? userId)
+    {
+        self.UserId = userId;
+        return self;
+    }
 }

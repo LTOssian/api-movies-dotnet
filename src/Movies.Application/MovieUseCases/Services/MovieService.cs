@@ -8,12 +8,14 @@ namespace Movies.Application.MovieUseCases.Services;
 public class MovieService : IMovieService
 {
     private readonly MovieValidator _movieValidator;
+    private readonly GetAllMoviesOptionsValidator _optionsValidator;
     private readonly IMovieRepository _movieRepository;
     private readonly IRatingRepository _ratingRepository;
 
-    public MovieService(IMovieRepository movieRepository, MovieValidator movieValidator, IRatingRepository ratingRepository)
+    public MovieService(IMovieRepository movieRepository, MovieValidator movieValidator, IRatingRepository ratingRepository, GetAllMoviesOptionsValidator optionsValidator)
     {
         _movieValidator = movieValidator;
+        _optionsValidator = optionsValidator;
         _movieRepository = movieRepository;
         _ratingRepository = ratingRepository;
     }
@@ -36,11 +38,12 @@ public class MovieService : IMovieService
     }
 
     public async Task<IEnumerable<Movie>> GetAllAsync(
-        Guid? userId,
+        GetAllMoviesOptions options,
         CancellationToken token = default
     )
     {
-        return await _movieRepository.GetAllAsync(userId, token);
+        await _optionsValidator.ValidateAsync(options);
+        return await _movieRepository.GetAllAsync(options, token);
     }
 
     public async Task<Movie?> GetByIdAsync(Guid id, Guid? userId, CancellationToken token = default)
