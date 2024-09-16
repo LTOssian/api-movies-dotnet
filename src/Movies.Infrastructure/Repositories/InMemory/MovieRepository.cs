@@ -52,6 +52,11 @@ public class MovieRepository : IMovieRepository
         return Task.FromResult(movie);
     }
 
+    public Task<int> GetCountAsync(string? title, int? yearofrelease, CancellationToken token = default)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task<bool> UpdateAsync(Movie movie, CancellationToken token)
     {
         var movieIndex = _movies.FindIndex(item => item.Id == movie.Id);

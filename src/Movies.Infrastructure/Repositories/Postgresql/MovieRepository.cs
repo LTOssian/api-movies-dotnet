@@ -127,12 +127,16 @@ public class MovieRepository : IMovieRepository
                     WHERE (@title IS NULL OR LOWER(m.title) LIKE ('%' || LOWER(@title) || '%'))
                         AND (@yearofrelease IS NULL OR m.year_of_release = @yearofrelease)
                     GROUP BY m.id, user_rating {orderClause}
+                    LIMIT @pageSize
+                    OFFSET @pageOffset
                 """,
                 new
                 {
                     userId = options.UserId,
                     title = options.Title,
-                    yearofrelease = options.YearOfRelease
+                    yearofrelease = options.YearOfRelease,
+                    pageSize = options.PageSize,
+                    pageOffset = (options.Page - 1) * options.PageSize
                 },
                 cancellationToken: token
             )
@@ -243,6 +247,26 @@ public class MovieRepository : IMovieRepository
         movie.Genres.AddRange(genres);
 
         return movie;
+    }
+
+    public async Task<int> GetCountAsync(
+        string? title,
+        int? yearofrelease,
+        CancellationToken token = default
+    )
+    {
+        using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
+        return await connection.QuerySingleAsync<int>(
+            new CommandDefinition(
+                """
+                    SELECT count(id) FROM movies
+                    WHERE (@title IS NULL OR LOWER(title) LIKE ('%' || LOWER(@title) || '%'))
+                        AND (@yearofrelease IS NULL OR year_of_release = @yearofrelease)
+                """,
+                new { yearofrelease, title },
+                cancellationToken: token
+            )
+        );
     }
 
     public async Task<bool> UpdateAsync(Movie movie, CancellationToken token = default)
