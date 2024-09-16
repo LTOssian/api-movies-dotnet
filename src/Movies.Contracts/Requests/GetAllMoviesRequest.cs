@@ -1,8 +1,8 @@
 namespace Movies.Contracts.Requests;
 
-public class GetAllMoviesRequest
+public record GetAllMoviesRequest : PaginatedRequest
 {
-    public string? Title { get; set; }
-    public int? Year { get; set; }
-    public string? SortBy { get; set; }
+    public string? Title { get; init; }
+    public int? Year { get; init; }
+    public string? SortBy { get; init; }
 }
