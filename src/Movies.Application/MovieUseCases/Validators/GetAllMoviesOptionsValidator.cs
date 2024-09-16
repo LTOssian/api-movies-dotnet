@@ -15,6 +15,6 @@ public class GetAllMoviesOptionsValidator : AbstractValidator<GetAllMoviesOption
             )
             .WithMessage("You can only sort by title or year_of_release");
         RuleFor(x => x.Page).NotEmpty().GreaterThanOrEqualTo(1);
-        RuleFor(x => x.PageSize).NotEmpty().GreaterThanOrEqualTo(1);
+        RuleFor(x => x.PageSize).NotEmpty().GreaterThanOrEqualTo(1).LessThanOrEqualTo(25);
     }
 }
