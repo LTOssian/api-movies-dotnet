@@ -2,6 +2,6 @@ namespace Movies.Contracts.Requests;
 
 public record PaginatedRequest
 {
-    public int? Page { get; init; } = 1;
-    public int? PageSize { get; init; } = 10;
+    public required int Page { get; init; } = 1;
+    public required int PageSize { get; init; } = 10;
 }

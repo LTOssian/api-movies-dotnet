@@ -40,9 +40,20 @@ public static class RequestToMovieMapper
             Genres = self.Genres.AsEnumerable()
         };
 
-    public static MoviesResponse ToResponse(this IEnumerable<Movie> self)
+    public static MoviesResponse ToResponse(
+        this IEnumerable<Movie> self,
+        int page,
+        int pageSize,
+        int moviesCount
+    )
     {
-        var response = new MoviesResponse { Items = self.Select(ToResponse) };
+        var response = new MoviesResponse
+        {
+            Items = self.Select(ToResponse),
+            Count = moviesCount,
+            Page = page,
+            PageSize = pageSize
+        };
 
         return response;
     }
@@ -74,7 +85,9 @@ public static class RequestToMovieMapper
                 ? SortOrder.Unsorted
                 : request.SortBy.StartsWith('-')
                     ? SortOrder.Descending
-                    : SortOrder.Ascending
+                    : SortOrder.Ascending,
+            Page = request.Page,
+            PageSize = request.PageSize
         };
 
     public static GetAllMoviesOptions WithUserId(this GetAllMoviesOptions self, Guid? userId)
