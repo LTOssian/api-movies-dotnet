@@ -42,7 +42,7 @@ public class MovieService : IMovieService
         CancellationToken token = default
     )
     {
-        await _optionsValidator.ValidateAsync(options);
+        await _optionsValidator.ValidateAndThrowAsync(options, token);
         return await _movieRepository.GetAllAsync(options, token);
     }
 

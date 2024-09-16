@@ -69,7 +69,12 @@ public static class RequestToMovieMapper
         {
             Title = request.Title,
             YearOfRelease = request.Year,
-            SortBy = request.SortBy
+            SortField = request.SortBy?.TrimStart('+', '-', ' '),
+            SortOrder = request.SortBy is null
+                ? SortOrder.Unsorted
+                : request.SortBy.StartsWith('-')
+                    ? SortOrder.Descending
+                    : SortOrder.Ascending
         };
 
     public static GetAllMoviesOptions WithUserId(this GetAllMoviesOptions self, Guid? userId)
