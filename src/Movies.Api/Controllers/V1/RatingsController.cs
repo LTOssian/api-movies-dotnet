@@ -17,7 +17,7 @@ public class RatingsController : ControllerBase
     }
 
     [Authorize]
-    [HttpPut(ApiEndpoints.Movies.Rate)]
+    [HttpPut(ApiEndpoints.V1.Movies.Rate)]
     public async Task<IActionResult> RateMovie(
         [FromRoute] Guid id,
         [FromBody] RateMovieRequest request,
@@ -31,7 +31,7 @@ public class RatingsController : ControllerBase
     }
 
     [Authorize]
-    [HttpDelete(ApiEndpoints.Movies.DeleteRating)]
+    [HttpDelete(ApiEndpoints.V1.Movies.DeleteRating)]
     public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken token)
     {
         var userId = HttpContext.GetUserId();
@@ -45,7 +45,7 @@ public class RatingsController : ControllerBase
     }
 
     [Authorize]
-    [HttpGet(ApiEndpoints.Ratings.GetUserRatings)]
+    [HttpGet(ApiEndpoints.V1.Ratings.GetUserRatings)]
     public async Task<IActionResult> Get(CancellationToken token)
     {
         var userId = HttpContext.GetUserId();
