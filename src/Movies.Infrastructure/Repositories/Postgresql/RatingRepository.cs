@@ -16,8 +16,8 @@ public class RatingRepository : IRatingRepository
 
     public async Task<bool> DeleteRatingAsync(Guid movieId, Guid userId, CancellationToken token)
     {
-        using var connection = await _dbConnectionFactory.CreateConnectionAsync();
-        using var transaction = await connection.BeginTransactionAsync();
+        await using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
+        await using var transaction = await connection.BeginTransactionAsync(token);
 
         var deletedRatingResult = await connection.ExecuteAsync(
             new CommandDefinition(
@@ -31,7 +31,7 @@ public class RatingRepository : IRatingRepository
             )
         );
 
-        await transaction.CommitAsync();
+        await transaction.CommitAsync(token);
         return deletedRatingResult > 0;
     }
 
@@ -41,7 +41,7 @@ public class RatingRepository : IRatingRepository
         CancellationToken token
     )
     {
-        using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
+        await using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
         return await connection.ExecuteScalarAsync<bool>(
             new CommandDefinition(
                 """
@@ -60,12 +60,12 @@ public class RatingRepository : IRatingRepository
         CancellationToken token
     )
     {
-        using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
+        await using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
 
         var ratedMoviesResult = await connection.QueryAsync<RatedMovie>(
             new CommandDefinition(
                 """
-                    SELECT r.movie_id AS movieid, m.slug AS slug, r.rating AS rating
+                    SELECT r.movie_id AS movieId, m.slug AS slug, r.rating AS rating
                     FROM movies AS m
                     JOIN ratings AS r ON m.id = r.movie_id
                     AND r.user_id = @userId
@@ -80,7 +80,7 @@ public class RatingRepository : IRatingRepository
 
     public async Task<float?> GetRatingAsync(Guid movieId, CancellationToken token)
     {
-        using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
+        await using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
 
         var rating = await connection.QuerySingleOrDefaultAsync<float?>(
             new CommandDefinition(
@@ -103,7 +103,7 @@ public class RatingRepository : IRatingRepository
         CancellationToken token
     )
     {
-        using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
+        await using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
 
         var ratings = await connection.QuerySingleOrDefaultAsync<(float?, int?)>(
             new CommandDefinition(
@@ -111,7 +111,6 @@ public class RatingRepository : IRatingRepository
                     SELECT round(avg(r.rating), 1), MAX(
                             CASE
                                 WHEN r.user_id = @userId THEN r.rating
-                                ELSE NULL
                             END
                         )
                     FROM ratings AS r
@@ -132,8 +131,8 @@ public class RatingRepository : IRatingRepository
         CancellationToken token
     )
     {
-        using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
-        using var transaction = await connection.BeginTransactionAsync();
+        await using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
+        await using var transaction = await connection.BeginTransactionAsync(token);
 
         var createdRating = await connection.ExecuteAsync(
             new CommandDefinition(
@@ -154,7 +153,7 @@ public class RatingRepository : IRatingRepository
             )
         );
 
-        await transaction.CommitAsync();
+        await transaction.CommitAsync(token);
         return createdRating > 0;
     }
 }

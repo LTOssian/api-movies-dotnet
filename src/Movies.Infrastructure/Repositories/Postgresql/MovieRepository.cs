@@ -1,4 +1,3 @@
-using System.Data;
 using Dapper;
 using Movies.Application.MovieUseCases;
 using Movies.Core.Entities;
@@ -17,8 +16,8 @@ public class MovieRepository : IMovieRepository
 
     public async Task<bool> CreateAsync(Movie movie, CancellationToken token = default)
     {
-        using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
-        using var transaction = await connection.BeginTransactionAsync();
+        await using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
+        await using var transaction = await connection.BeginTransactionAsync(token);
 
         var movieInsertResult = await connection.ExecuteAsync(
             new CommandDefinition(
@@ -55,15 +54,15 @@ public class MovieRepository : IMovieRepository
             );
         }
 
-        await transaction.CommitAsync();
+        await transaction.CommitAsync(token);
 
         return movieInsertResult > 0;
     }
 
     public async Task<bool> DeleteAsync(Guid id, CancellationToken token = default)
     {
-        using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
-        using var transaction = await connection.BeginTransactionAsync();
+        await using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
+        await using var transaction = await connection.BeginTransactionAsync(token);
 
         var deletedMovieResult = await connection.ExecuteAsync(
             new CommandDefinition(
@@ -77,13 +76,13 @@ public class MovieRepository : IMovieRepository
             )
         );
 
-        await transaction.CommitAsync();
+        await transaction.CommitAsync(token);
         return deletedMovieResult > 0;
     }
 
     public async Task<bool> ExistsById(Guid id, CancellationToken token = default)
     {
-        using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
+        await using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
         return await connection.ExecuteScalarAsync<bool>(
             new CommandDefinition(
                 """
@@ -102,7 +101,7 @@ public class MovieRepository : IMovieRepository
         CancellationToken token = default
     )
     {
-        using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
+        await using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
 
         var orderClause = string.Empty;
         if (options.SortField is not null)
@@ -157,7 +156,7 @@ public class MovieRepository : IMovieRepository
 
     public async Task<Movie?> GetByIdAsync(Guid id, Guid? userId, CancellationToken token = default)
     {
-        using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
+        await using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
         var movie = await connection.QuerySingleOrDefaultAsync<Movie>(
             new CommandDefinition(
                 """
@@ -202,7 +201,7 @@ public class MovieRepository : IMovieRepository
         CancellationToken token = default
     )
     {
-        using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
+        await using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
         var movie = await connection.QuerySingleOrDefaultAsync<Movie>(
             new CommandDefinition(
                 """
@@ -255,7 +254,7 @@ public class MovieRepository : IMovieRepository
         CancellationToken token = default
     )
     {
-        using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
+        await using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
         return await connection.QuerySingleAsync<int>(
             new CommandDefinition(
                 """
@@ -271,8 +270,8 @@ public class MovieRepository : IMovieRepository
 
     public async Task<bool> UpdateAsync(Movie movie, CancellationToken token = default)
     {
-        using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
-        using var transaction = await connection.BeginTransactionAsync();
+        await using var connection = await _dbConnectionFactory.CreateConnectionAsync(token);
+        await using var transaction = await connection.BeginTransactionAsync(token);
 
         await connection.ExecuteAsync(
             new CommandDefinition(
@@ -312,7 +311,7 @@ public class MovieRepository : IMovieRepository
             )
         );
 
-        await transaction.CommitAsync();
+        await transaction.CommitAsync(token);
         return updatedMovieResult > 0;
     }
 }
