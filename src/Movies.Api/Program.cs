@@ -47,7 +47,7 @@ builder.Services.AddAuthorization(x =>
 });
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-// builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen();
 
 builder
     .Services.AddPresentation()
