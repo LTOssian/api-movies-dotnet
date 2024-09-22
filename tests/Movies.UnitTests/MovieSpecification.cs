@@ -31,14 +31,19 @@ public class MovieSpecification
 
     [Theory]
     [InlineData("Le Comte de Monte Cristo", 2024, "le-comte-de-monte-cristo-2024")]
-    [InlineData("Star Wars: Episode IV - A New Hope!", 1977, "star-wars-episode-iv---a-new-hope-1977")]
+    [InlineData(
+        "Star Wars: Episode IV - A New Hope!",
+        1977,
+        "star-wars-episode-iv---a-new-hope-1977"
+    )]
     public void Should_Generate_Valid_Slug(string title, int yearOfRelease, string expectedSlug)
     {
-        var movie = new Movie{
-            Id= Guid.NewGuid(),
+        var movie = new Movie
+        {
+            Id = Guid.NewGuid(),
             Title = title,
             YearOfRelease = yearOfRelease,
-            Genres = new List<string> { "Action "}
+            Genres = new List<string> { "Action " }
         };
 
         movie.Slug.Should().Be(expectedSlug);
@@ -67,11 +72,11 @@ public class MovieSpecification
         validationResult.Errors.Should().HaveCount(4);
         validationResult.Errors.Should().ContainSingle(e => e.PropertyName == nameof(Movie.Id));
         validationResult.Errors.Should().ContainSingle(e => e.PropertyName == nameof(Movie.Title));
-        validationResult.Errors.Should().ContainSingle(e => e.PropertyName == nameof(Movie.YearOfRelease));
+        validationResult
+            .Errors.Should()
+            .ContainSingle(e => e.PropertyName == nameof(Movie.YearOfRelease));
         validationResult.Errors.Should().ContainSingle(e => e.PropertyName == nameof(Movie.Genres));
     }
-
-
 
     private static Movie CreateValidMovie()
     {
@@ -118,14 +123,35 @@ internal class StubFailingGetBySlugRepository : IMovieRepository
         throw new NotImplementedException();
     }
 
+    public Task<IEnumerable<Movie>> GetAllAsync(
+        GetAllMoviesOptions options,
+        CancellationToken token = default
+    )
+    {
+        throw new NotImplementedException();
+    }
+
     public Task<Movie?> GetByIdAsync(Guid id, Guid? userId, CancellationToken token = default)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<Movie?> GetBySlugAsync(string slug, Guid? userId, CancellationToken token = default)
+    public async Task<Movie?> GetBySlugAsync(
+        string slug,
+        Guid? userId,
+        CancellationToken token = default
+    )
     {
         return await Task.FromResult<Movie?>(null);
+    }
+
+    public Task<int> GetCountAsync(
+        string? title,
+        int? yearofrelease,
+        CancellationToken token = default
+    )
+    {
+        throw new NotImplementedException();
     }
 
     public Task<bool> UpdateAsync(Movie movie, CancellationToken token = default)
