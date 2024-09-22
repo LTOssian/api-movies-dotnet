@@ -21,6 +21,7 @@ Swagger disponible à [localhost:5015/swagger/index.html](http://localhost:5015/
 - Recherche, filtre et pagination sur la lecture des items Movies
 - CRUD Ratings
   - Authorization
+- Middleware de gestion des erreurs
 - Versioning
 - Test unitaire sur les modèles de Movies.Core
 
